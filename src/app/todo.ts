@@ -4,6 +4,6 @@ export class Todo {
 
     constructor(newTask: string) {
         this.task = newTask
-        this.isDone = true
+        this.isDone = false
     }
 }

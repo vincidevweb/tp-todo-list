@@ -22,7 +22,29 @@ export class TodoListComponent implements OnInit {
     }
   ];
 
-  constructor() {}
+  newTodo: string;
+
+  constructor() {
+    const todosInStorage: string | null = sessionStorage.getItem("todos");
+    console.log("Mes todos : ", todosInStorage);
+    if (todosInStorage) {
+      this.todos = JSON.parse(todosInStorage);
+    }
+  }
 
   ngOnInit() {}
+
+  updateTodosInStorage() {
+    sessionStorage.setItem("todos", JSON.stringify(this.todos));
+  }
+
+  addTodo() {
+    this.todos.push(new Todo(this.newTodo));
+    this.updateTodosInStorage();
+  }
+
+  deleteTodo(todo: Todo) {
+    this.todos = this.todos.filter(t => todo.task !== t.task);
+    this.updateTodosInStorage();
+  }
 }

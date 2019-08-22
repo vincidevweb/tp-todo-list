@@ -1,5 +1,9 @@
-<div [ngClass]="{ 'done': todo.isDone }" class="todo rounded">
-  <input type="checkbox" [(ngModel)]="todo.isDone" />
+<div [ngClass]="{ done: todo.isDone }" class="todo rounded">
+  <input
+    type="checkbox"
+    [ngModel]="todo.isDone"
+    (ngModelChange)="changeIsDone($event)"
+  />
   <span class="libelle">{{ todo.task }}</span>
   <button (click)="deleteMe()" class="btn delete float-right">x</button>
 </div>
