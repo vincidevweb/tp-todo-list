@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Todo } from "../todo";
+import { TodoService } from "../todo.service";
 
 @Component({
   selector: "app-todo-list",
@@ -7,44 +8,35 @@ import { Todo } from "../todo";
   styleUrls: ["./todo-list.component.css"]
 })
 export class TodoListComponent implements OnInit {
-  todos: Todo[] = [
-    {
-      task: "Premier todo",
-      isDone: false
-    },
-    {
-      task: "Deuxième todo",
-      isDone: true
-    },
-    {
-      task: "Troisième todo",
-      isDone: false
-    }
-  ];
+  todos: Todo[] = [];
 
   newTodo: string;
 
-  constructor() {
-    const todosInStorage: string | null = sessionStorage.getItem("todos");
-    console.log("Mes todos : ", todosInStorage);
-    if (todosInStorage) {
-      this.todos = JSON.parse(todosInStorage);
-    }
+  constructor(private todoService: TodoService) {}
+
+  ngOnInit() {
+    this.refreshTodos();
   }
 
-  ngOnInit() {}
+  private refreshTodos() {
+    this.todoService
+    .getTodos()
+    .subscribe(
+      result => (this.todos = result),
+      error => console.error("Une erreur est survenue", error)
+    );
+  }
 
-  updateTodosInStorage() {
-    sessionStorage.setItem("todos", JSON.stringify(this.todos));
+  updateTodosInStorage(todo: Todo) {
+    this.todoService.updateTodo(todo).subscribe(() => this.refreshTodos());
   }
 
   addTodo() {
-    this.todos.push(new Todo(this.newTodo));
-    this.updateTodosInStorage();
+    const todoToAdd = new Todo(this.newTodo)
+    this.todoService.createTodo(todoToAdd).subscribe(() => this.refreshTodos())
   }
 
   deleteTodo(todo: Todo) {
-    this.todos = this.todos.filter(t => todo.task !== t.task);
-    this.updateTodosInStorage();
+    this.todoService.deleteTodo(todo).subscribe(() => this.refreshTodos())
   }
 }
